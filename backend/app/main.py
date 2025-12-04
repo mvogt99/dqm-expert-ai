@@ -11,6 +11,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from sqlalchemy.pool import NullPool
+from sqlalchemy import text
 
 from app.config import settings
 from app.routes import data_profiling, data_quality, ai_analysis
@@ -49,7 +50,7 @@ async def lifespan(app: FastAPI):
     logger.info("Starting DQM Expert AI API...")
     # Verify database connection
     async with engine.begin() as conn:
-        await conn.execute("SELECT 1")
+        await conn.execute(text("SELECT 1"))
     logger.info("Database connection verified")
     yield
     logger.info("Shutting down DQM Expert AI API...")
