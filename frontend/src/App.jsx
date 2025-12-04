@@ -4,7 +4,7 @@ import DataQualityRules from './components/DataQualityRules';
 import RootCauseAnalysis from './components/RootCauseAnalysis';
 import './styles/App.css';
 
-const API_BASE = 'http://localhost:8000';
+const API_BASE = 'http://localhost:8002';
 
 function App() {
   const [activeTab, setActiveTab] = useState('profiling');
