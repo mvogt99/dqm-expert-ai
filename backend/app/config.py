@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+asyncpg://dqm_user:dqm_password@localhost:5432/northwind"
     
     # CORS
-    cors_origins: List[str] = ["http://localhost:3000", "http://localhost:5173"]
+    cors_origins: List[str] = ["http://localhost:3000", "http://localhost:3002", "http://localhost:5173"]
     
     # Local AI endpoints
     local_ai_planning_url: str = "http://localhost:8004/v1"  # RTX 5090
