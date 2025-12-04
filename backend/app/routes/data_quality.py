@@ -78,6 +78,24 @@ async def create_rule(
         raise HTTPException(status_code=400, detail=str(e))
 
 
+# IMPORTANT: /rules/suggest must be defined BEFORE /rules/{rule_id}
+# to prevent "suggest" from being parsed as an integer rule_id
+@router.get("/rules/suggest")
+async def suggest_rules(db: AsyncSession = Depends(get_db)):
+    """Suggest rules based on recent profiling results."""
+    from app.services.data_profiling import DataProfilingService
+
+    profiling_service = DataProfilingService(db)
+    dq_service = DataQualityRulesService(db)
+
+    # Get recent profiling results
+    profiling_results = await profiling_service.get_stored_results(limit=50)
+
+    # Suggest rules
+    suggestions = await dq_service.suggest_rules(profiling_results)
+    return {"suggestions": suggestions}
+
+
 @router.get("/rules/{rule_id}")
 async def get_rule(rule_id: int, db: AsyncSession = Depends(get_db)):
     """Get a specific rule by ID."""
@@ -104,22 +122,6 @@ async def execute_rule(rule_id: int, db: AsyncSession = Depends(get_db)):
         }
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-
-
-@router.get("/rules/suggest")
-async def suggest_rules(db: AsyncSession = Depends(get_db)):
-    """Suggest rules based on recent profiling results."""
-    from app.services.data_profiling import DataProfilingService
-    
-    profiling_service = DataProfilingService(db)
-    dq_service = DataQualityRulesService(db)
-    
-    # Get recent profiling results
-    profiling_results = await profiling_service.get_stored_results(limit=50)
-    
-    # Suggest rules
-    suggestions = await dq_service.suggest_rules(profiling_results)
-    return {"suggestions": suggestions}
 
 
 @router.get("/results")
